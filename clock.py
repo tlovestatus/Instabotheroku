@@ -19,18 +19,17 @@ print(workspace_in_use["path"])
 session = InstaPy(username=os.environ['username'],
                   password=os.environ['password'],
                   headless_browser=True)
-sched = BlockingScheduler()
-
-@sched.scheduled_job('cron', hour=os.environ['hour'],minute=os.environ['minute'])
-def scheduled_job():
-
-    with smart_run(session):
+with smart_run(session):
         """ Activity flow """
         # general settings
         session.set_dont_include(["friend1", "friend2", "friend3"])
         #session.follow_likers(follow_likers_of_users, photos_grab_amount=int(os.environ['photos_grab_amount']), follow_likers_per_photo=int(os.environ['follow_likers_per_photo']), randomize=False, sleep_delay=int(os.environ['follow_sleep_delay']), interact=False)
         session.unfollow_users(amount=int(os.environ['unfollow_amount']), allFollowing=True, style="LIFO", unfollow_after=48 * 60 * 60, sleep_delay=int(os.environ['unfollow_sleep_delay']))
         # activity
+sched = BlockingScheduler()
+
+@sched.scheduled_job('cron', hour=os.environ['hour'],minute=os.environ['minute'])
+def scheduled_job():
         #session.like_by_tags(["natgeo"], amount=10)
 
 sched.start()
